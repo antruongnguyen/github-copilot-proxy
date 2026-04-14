@@ -70,16 +70,15 @@ impl AuthManager {
         // Need a GitHub access token first
         let gh_token = self.ensure_github_token().await?;
 
-        let api_key =
-            match copilot_token::fetch_copilot_token(&self.client, &gh_token).await {
-                Ok(key) => key,
-                Err(e) => {
-                    // Token might be invalid, clear it so next attempt re-authenticates
-                    let mut tok_guard = self.github_token.write().await;
-                    *tok_guard = None;
-                    return Err(e);
-                }
-            };
+        let api_key = match copilot_token::fetch_copilot_token(&self.client, &gh_token).await {
+            Ok(key) => key,
+            Err(e) => {
+                // Token might be invalid, clear it so next attempt re-authenticates
+                let mut tok_guard = self.github_token.write().await;
+                *tok_guard = None;
+                return Err(e);
+            }
+        };
         storage::save_api_key(&self.token_dir, &api_key)?;
 
         *self.auth_status.write().await = AuthStatus::Authenticated;

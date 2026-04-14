@@ -1,8 +1,8 @@
 use std::sync::Arc;
 use std::time::Duration;
 
-use axum::extract::State;
 use axum::extract::DefaultBodyLimit;
+use axum::extract::State;
 use axum::http::StatusCode;
 use axum::middleware;
 use axum::response::{Html, IntoResponse};
@@ -47,7 +47,10 @@ fn render_auth_page(status: &AuthStatus) -> String {
                 <button onclick="signOut()" class="sign-out-btn">Sign out &amp; switch account</button>"#,
             ),
         ),
-        AuthStatus::Pending { user_code, verification_uri } => (
+        AuthStatus::Pending {
+            user_code,
+            verification_uri,
+        } => (
             "pending",
             "Waiting for authorization",
             format!(

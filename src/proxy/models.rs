@@ -1,15 +1,13 @@
 use axum::extract::State;
-use axum::response::{IntoResponse, Response};
 use axum::http::StatusCode;
+use axum::response::{IntoResponse, Response};
 use serde_json::Value;
 
 use crate::error::AppError;
 use crate::proxy::handler::ProxyState;
 use crate::proxy::headers::build_copilot_headers;
 
-pub async fn list_models(
-    State(state): State<ProxyState>,
-) -> Result<Response, AppError> {
+pub async fn list_models(State(state): State<ProxyState>) -> Result<Response, AppError> {
     let copilot_key = state.auth.get_copilot_token().await?;
     let headers = build_copilot_headers(&copilot_key.token);
     let url = format!("{}/models", copilot_key.api_base());

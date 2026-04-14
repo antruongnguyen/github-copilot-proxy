@@ -46,11 +46,7 @@ pub async fn responses_compact(
     forward_response_request(&state, "/responses", &body).await
 }
 
-async fn forward_request(
-    state: &ProxyState,
-    path: &str,
-    body: &str,
-) -> Result<Response, AppError> {
+async fn forward_request(state: &ProxyState, path: &str, body: &str) -> Result<Response, AppError> {
     let copilot_key = state.auth.get_copilot_token().await?;
     let headers = build_copilot_headers(&copilot_key.token);
     let url = format!("{}{path}", copilot_key.api_base());
@@ -82,9 +78,11 @@ async fn forward_request(
         .unwrap_or(false);
 
     if is_streaming {
-        let stream = resp.bytes_stream().map(|chunk: Result<axum::body::Bytes, reqwest::Error>| {
-            chunk.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))
-        });
+        let stream = resp
+            .bytes_stream()
+            .map(|chunk: Result<axum::body::Bytes, reqwest::Error>| {
+                chunk.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))
+            });
 
         let body = Body::from_stream(stream);
 
@@ -103,10 +101,7 @@ async fn forward_request(
 
         Ok((
             status,
-            [(
-                axum::http::header::CONTENT_TYPE,
-                "application/json",
-            )],
+            [(axum::http::header::CONTENT_TYPE, "application/json")],
             response_body,
         )
             .into_response())
@@ -152,9 +147,11 @@ async fn forward_response_request(
         .is_some_and(|ct| ct.contains("text/event-stream"));
 
     if is_sse {
-        let stream = resp.bytes_stream().map(|chunk: Result<axum::body::Bytes, reqwest::Error>| {
-            chunk.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))
-        });
+        let stream = resp
+            .bytes_stream()
+            .map(|chunk: Result<axum::body::Bytes, reqwest::Error>| {
+                chunk.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))
+            });
 
         Ok(Response::builder()
             .status(status)

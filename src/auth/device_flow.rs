@@ -83,10 +83,7 @@ pub async fn poll_for_token(
             .form(&[
                 ("client_id", GITHUB_CLIENT_ID),
                 ("device_code", device_code),
-                (
-                    "grant_type",
-                    "urn:ietf:params:oauth:grant-type:device_code",
-                ),
+                ("grant_type", "urn:ietf:params:oauth:grant-type:device_code"),
             ])
             .send()
             .await

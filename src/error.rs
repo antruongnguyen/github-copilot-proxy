@@ -24,11 +24,17 @@ struct OpenAiErrorBody {
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         let (status, error_type, message) = match &self {
-            AppError::Auth(msg) => (StatusCode::UNAUTHORIZED, "authentication_error", msg.clone()),
+            AppError::Auth(msg) => (
+                StatusCode::UNAUTHORIZED,
+                "authentication_error",
+                msg.clone(),
+            ),
             AppError::Proxy(msg) => (StatusCode::BAD_GATEWAY, "proxy_error", msg.clone()),
-            AppError::Internal(msg) => {
-                (StatusCode::INTERNAL_SERVER_ERROR, "internal_error", msg.clone())
-            }
+            AppError::Internal(msg) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "internal_error",
+                msg.clone(),
+            ),
         };
 
         let body = OpenAiError {
@@ -98,14 +104,8 @@ mod tests {
 
     #[test]
     fn display_formats_correctly() {
-        assert_eq!(
-            AppError::Auth("x".into()).to_string(),
-            "auth error: x"
-        );
-        assert_eq!(
-            AppError::Proxy("y".into()).to_string(),
-            "proxy error: y"
-        );
+        assert_eq!(AppError::Auth("x".into()).to_string(), "auth error: x");
+        assert_eq!(AppError::Proxy("y".into()).to_string(), "proxy error: y");
         assert_eq!(
             AppError::Internal("z".into()).to_string(),
             "internal error: z"

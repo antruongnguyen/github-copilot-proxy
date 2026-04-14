@@ -24,10 +24,7 @@ fn base_headers(copilot_token: &str) -> HeaderMap {
         "Authorization",
         HeaderValue::from_str(&format!("Bearer {copilot_token}")).unwrap(),
     );
-    headers.insert(
-        "editor-version",
-        HeaderValue::from_static("vscode/1.95.0"),
-    );
+    headers.insert("editor-version", HeaderValue::from_static("vscode/1.95.0"));
     headers.insert(
         "editor-plugin-version",
         HeaderValue::from_str(&format!("copilot-chat/{COPILOT_CHAT_VERSION}")).unwrap(),
@@ -103,29 +100,41 @@ mod tests {
             headers.get("editor-version").unwrap().to_str().unwrap(),
             "vscode/1.95.0"
         );
-        assert!(headers
-            .get("editor-plugin-version")
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .starts_with("copilot-chat/"));
-        assert!(headers
-            .get("User-Agent")
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .starts_with("GitHubCopilotChat/"));
+        assert!(
+            headers
+                .get("editor-plugin-version")
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .starts_with("copilot-chat/")
+        );
+        assert!(
+            headers
+                .get("User-Agent")
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .starts_with("GitHubCopilotChat/")
+        );
         assert_eq!(
             headers.get("openai-intent").unwrap().to_str().unwrap(),
             "conversation-panel"
         );
         assert_eq!(
-            headers.get("x-github-api-version").unwrap().to_str().unwrap(),
+            headers
+                .get("x-github-api-version")
+                .unwrap()
+                .to_str()
+                .unwrap(),
             "2025-04-01"
         );
         assert!(headers.get("x-request-id").is_some());
         assert_eq!(
-            headers.get("copilot-integration-id").unwrap().to_str().unwrap(),
+            headers
+                .get("copilot-integration-id")
+                .unwrap()
+                .to_str()
+                .unwrap(),
             "vscode-chat"
         );
         assert_eq!(
@@ -169,7 +178,8 @@ mod tests {
 
     #[test]
     fn detect_initiator_agent_for_assistant_messages() {
-        let body = r#"{"input":[{"role":"user","content":"hi"},{"role":"assistant","content":"hey"}]}"#;
+        let body =
+            r#"{"input":[{"role":"user","content":"hi"},{"role":"assistant","content":"hey"}]}"#;
         assert_eq!(detect_initiator(body), "agent");
     }
 

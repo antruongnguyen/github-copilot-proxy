@@ -9,7 +9,10 @@ fn default_token_dir() -> PathBuf {
 }
 
 #[derive(Parser, Debug, Clone)]
-#[command(name = "copilot-proxy", about = "OpenAI-compatible proxy for GitHub Copilot")]
+#[command(
+    name = "copilot-proxy",
+    about = "OpenAI-compatible proxy for GitHub Copilot"
+)]
 pub struct Config {
     /// Host address to bind to
     #[arg(long, env = "COPILOT_PROXY_HOST", default_value = "0.0.0.0")]

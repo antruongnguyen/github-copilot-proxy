@@ -132,12 +132,7 @@ async fn root_page_returns_html() {
     let app = create_router(test_auth_manager(), None);
 
     let resp = app
-        .oneshot(
-            Request::builder()
-                .uri("/")
-                .body(Body::empty())
-                .unwrap(),
-        )
+        .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
         .await
         .unwrap();
 
@@ -177,12 +172,7 @@ async fn root_and_auth_status_bypass_api_key() {
 
     // Root page — no key needed
     let resp = app
-        .oneshot(
-            Request::builder()
-                .uri("/")
-                .body(Body::empty())
-                .unwrap(),
-        )
+        .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
         .await
         .unwrap();
     assert_eq!(resp.status(), StatusCode::OK);

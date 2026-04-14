@@ -11,10 +11,7 @@ pub async fn fetch_copilot_token(
 ) -> Result<CopilotApiKey, AppError> {
     let resp = client
         .get(COPILOT_TOKEN_URL)
-        .header(
-            "Authorization",
-            format!("token {github_access_token}"),
-        )
+        .header("Authorization", format!("token {github_access_token}"))
         .header("Accept", "application/json")
         .header("User-Agent", "copilot-proxy")
         .send()
