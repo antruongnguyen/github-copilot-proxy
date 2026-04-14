@@ -8,10 +8,10 @@ A Rust HTTP proxy that exposes an OpenAI-compatible API (`/v1/chat/completions`,
 
 ```
 ┌─────────────┐      ┌──────────────────┐      ┌──────────────────────────┐
-│  Client      │      │  copilot-proxy   │      │  api.githubcopilot.com   │
-│  (codex,     │─────>│                  │─────>│                          │
-│   aider,     │      │  :6789           │      │  /chat/completions       │
-│   curl)      │<─────│                  │<─────│  /responses              │
+│  Client     │      │  copilot-proxy   │      │  api.githubcopilot.com   │
+│  (codex,    │─────>│                  │─────>│                          │
+│   aider,    │      │  :6789           │      │  /chat/completions       │
+│   curl)     │<─────│                  │<─────│  /responses              │
 └─────────────┘      └──────────────────┘      └──────────────────────────┘
                             │
                             ▼

@@ -24,9 +24,9 @@ Client (curl, aider, codex, etc.)
     │
     │  OpenAI-format HTTP request
     ▼
-┌──────────────────────────────┐
-│        copilot-proxy         │
-│                              │
+┌─────────────────────────────┐
+│        copilot-proxy        │
+│                             │
 │  ┌────────┐  ┌────────────┐ │
 │  │ Router │──│ Auth       │ │
 │  │ (axum) │  │ Manager    │ │
