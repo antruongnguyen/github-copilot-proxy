@@ -84,7 +84,7 @@ async fn api_key_middleware_rejects_on_chat_completions() {
                 .method("POST")
                 .uri("/v1/chat/completions")
                 .header("Content-Type", "application/json")
-                .body(Body::from(r#"{"model":"gpt-4o","messages":[]}"#))
+                .body(Body::from(r#"{"model":"gpt-5.4","messages":[]}"#))
                 .unwrap(),
         )
         .await
@@ -198,7 +198,7 @@ async fn api_key_middleware_rejects_on_responses() {
                 .method("POST")
                 .uri("/v1/responses")
                 .header("Content-Type", "application/json")
-                .body(Body::from(r#"{"model":"gpt-4o","input":"hello"}"#))
+                .body(Body::from(r#"{"model":"gpt-5.4","input":"hello"}"#))
                 .unwrap(),
         )
         .await
@@ -217,7 +217,7 @@ async fn api_key_middleware_rejects_on_responses_compact() {
                 .method("POST")
                 .uri("/v1/responses/compact")
                 .header("Content-Type", "application/json")
-                .body(Body::from(r#"{"model":"gpt-4o","input":"hello"}"#))
+                .body(Body::from(r#"{"model":"gpt-5.4","input":"hello"}"#))
                 .unwrap(),
         )
         .await

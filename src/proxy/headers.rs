@@ -186,6 +186,6 @@ mod tests {
 
     #[test]
     fn detect_initiator_user_for_no_input() {
-        assert_eq!(detect_initiator(r#"{"model":"gpt-4o"}"#), "user");
+        assert_eq!(detect_initiator(r#"{"model":"gpt-5.4"}"#), "user");
     }
 }

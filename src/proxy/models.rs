@@ -50,15 +50,17 @@ pub fn static_model_list() -> Value {
     use serde_json::json;
 
     const COPILOT_MODELS: &[&str] = &[
-        "gpt-4o",
-        "gpt-4o-mini",
+        "gpt-5.4",
+        "gpt-5.4-mini",
+        "gpt-5.3-codex",
+        "gpt-5-mini",
         "gpt-4.1",
-        "gpt-4.1-mini",
         "o3-mini",
         "o4-mini",
-        "claude-3.5-sonnet",
-        "claude-sonnet-4",
-        "gemini-2.0-flash-001",
+        "claude-opus-4.6",
+        "claude-sonnet-4.6",
+        "claude-haiku-4.5",
+        "gemini-2.5-pro",
     ];
 
     let data: Vec<Value> = COPILOT_MODELS
@@ -108,8 +110,8 @@ mod tests {
             .map(|m| m["id"].as_str().unwrap())
             .collect();
 
-        assert!(ids.contains(&"gpt-4o"));
-        assert!(ids.contains(&"claude-3.5-sonnet"));
-        assert!(ids.contains(&"gemini-2.0-flash-001"));
+        assert!(ids.contains(&"gpt-5.4"));
+        assert!(ids.contains(&"claude-sonnet-4.6"));
+        assert!(ids.contains(&"gemini-2.5-pro"));
     }
 }
