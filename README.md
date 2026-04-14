@@ -1,4 +1,4 @@
-# copilot-proxy
+# copilot-proxy v1.0.0
 
 **Use GitHub Copilot models from any OpenAI-compatible tool.**
 
@@ -22,6 +22,7 @@ A lightweight Rust proxy that exposes GitHub Copilot's AI models through a stand
 - **Account switching** — sign out and re-authenticate without restarting
 - **Auto token management** — tokens cached to disk, auto-refreshed on expiry
 - **Optional API key** — protect the proxy with a local Bearer token
+- **Codex CLI support** — `/v1/responses` and `/v1/responses/compact` endpoints
 - **Fast** — built in Rust with async I/O, sub-millisecond proxy overhead
 
 ## Quick Start
@@ -94,6 +95,8 @@ Then: `codex --provider copilot-proxy "your prompt"`
 | `POST` | `/auth/logout` | Sign out and start new device flow |
 | `GET` | `/v1/models` | List available Copilot models |
 | `POST` | `/v1/chat/completions` | Chat completions (streaming + non-streaming) |
+| `POST` | `/v1/responses` | Responses API (Codex CLI compatible) |
+| `POST` | `/v1/responses/compact` | Context compaction for long sessions |
 | `POST` | `/v1/embeddings` | Text embeddings |
 
 ## Configuration

@@ -64,7 +64,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
 
-## Project: copilot-proxy
+## Project: copilot-proxy v1.0.0
 
 **What:** Rust HTTP proxy exposing OpenAI-compatible API backed by GitHub Copilot (`api.githubcopilot.com`). Licensed MIT.
 
