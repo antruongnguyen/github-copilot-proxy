@@ -81,7 +81,7 @@ async fn forward_request(state: &ProxyState, path: &str, body: &str) -> Result<R
         let stream = resp
             .bytes_stream()
             .map(|chunk: Result<axum::body::Bytes, reqwest::Error>| {
-                chunk.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))
+                chunk.map_err(|e| std::io::Error::other(e.to_string()))
             });
 
         let body = Body::from_stream(stream);
@@ -150,7 +150,7 @@ async fn forward_response_request(
         let stream = resp
             .bytes_stream()
             .map(|chunk: Result<axum::body::Bytes, reqwest::Error>| {
-                chunk.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))
+                chunk.map_err(|e| std::io::Error::other(e.to_string()))
             });
 
         Ok(Response::builder()

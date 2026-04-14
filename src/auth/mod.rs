@@ -50,10 +50,10 @@ impl AuthManager {
         // Fast path: cached and valid
         {
             let key = self.copilot_key.read().await;
-            if let Some(k) = key.as_ref() {
-                if !k.is_expired() {
-                    return Ok(k.clone());
-                }
+            if let Some(k) = key.as_ref()
+                && !k.is_expired()
+            {
+                return Ok(k.clone());
             }
         }
 
@@ -61,10 +61,10 @@ impl AuthManager {
         let mut key_guard = self.copilot_key.write().await;
 
         // Double-check after acquiring write lock
-        if let Some(k) = key_guard.as_ref() {
-            if !k.is_expired() {
-                return Ok(k.clone());
-            }
+        if let Some(k) = key_guard.as_ref()
+            && !k.is_expired()
+        {
+            return Ok(k.clone());
         }
 
         // Need a GitHub access token first
@@ -91,12 +91,12 @@ impl AuthManager {
         // Already have a valid copilot token?
         {
             let key = self.copilot_key.read().await;
-            if let Some(k) = key.as_ref() {
-                if !k.is_expired() {
-                    *self.auth_status.write().await = AuthStatus::Authenticated;
-                    tracing::info!("Copilot token loaded from cache");
-                    return false;
-                }
+            if let Some(k) = key.as_ref()
+                && !k.is_expired()
+            {
+                *self.auth_status.write().await = AuthStatus::Authenticated;
+                tracing::info!("Copilot token loaded from cache");
+                return false;
             }
         }
 
