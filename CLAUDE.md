@@ -66,21 +66,19 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ## Project: copilot-proxy
 
-**What:** Rust HTTP proxy exposing OpenAI-compatible API backed by GitHub Copilot (`api.githubcopilot.com`).
+**What:** Rust HTTP proxy exposing OpenAI-compatible API backed by GitHub Copilot (`api.githubcopilot.com`). Licensed MIT.
 
 **Stack:** Rust, axum (HTTP server), reqwest (HTTP client), tokio (async), clap (CLI).
 
+**Defaults:** Host `0.0.0.0`, port `6789`, tokens at `~/.config/copilot-proxy/`.
+
 **Key modules:**
-- `src/auth/` — GitHub OAuth Device Flow + Copilot token lifecycle
-- `src/proxy/` — Request forwarding with Copilot headers, streaming SSE
-- `src/server/` — axum router, API key middleware
+- `src/auth/` — GitHub OAuth Device Flow + Copilot token lifecycle + web UI auth status
+- `src/proxy/` — Request forwarding with Copilot headers, streaming SSE, dynamic model listing
+- `src/server/` — axum router, API key middleware, auth web UI
 - `src/config.rs` — CLI/env configuration
 - `src/error.rs` — OpenAI-format error responses
 
 **Test with:** `cargo test` (38 unit + integration tests)
 
-**Run with:** `cargo run -- --port 8080` (first run triggers GitHub device flow auth)
-
-**Reference projects:**
-- `hair` project at `/Users/I756434/Projects/sap/hair/hair` — established Rust proxy patterns
-- `reference-repos/litellm/` — GitHub Copilot auth flow and API details
+**Run with:** `cargo run` (default: `0.0.0.0:6789`, first run triggers GitHub device flow auth)

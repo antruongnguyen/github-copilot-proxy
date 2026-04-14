@@ -1,73 +1,136 @@
 # copilot-proxy
 
-An OpenAI-compatible HTTP proxy for GitHub Copilot. Authenticate once with your GitHub account, then use any OpenAI-compatible tool (Codex CLI, aider, Continue, curl) against `http://localhost:8080/v1/` — requests are transparently forwarded to GitHub Copilot's API.
+**Use GitHub Copilot models from any OpenAI-compatible tool.**
+
+A lightweight Rust proxy that exposes GitHub Copilot's AI models through a standard OpenAI API. Authenticate once with your GitHub account, then use tools like [CLINE](https://cline.bot), [Claude Code](https://claude.com/product/claude-code), [Codex CLI](https://github.com/openai/codex), or plain `curl` against `http://localhost:6789/v1/`.
+
+```
+┌─────────────┐      ┌──────────────────┐      ┌──────────────────────────┐
+│  Your tools │      │  copilot-proxy   │      │  api.githubcopilot.com   │
+│  (aider,    │─────>│                  │─────>│                          │
+│   codex,    │      │  :6789           │      │  /chat/completions       │
+│   curl)     │<─────│                  │<─────│  /models                 │
+└─────────────┘      └──────────────────┘      └──────────────────────────┘
+```
+
+## Features
+
+- **OpenAI-compatible API** — drop-in replacement for any tool that speaks OpenAI
+- **Dynamic model discovery** — lists all models available to your Copilot account
+- **Streaming support** — real-time SSE streaming for chat completions
+- **Web UI** — browser-based auth flow with device code display and model listing
+- **Account switching** — sign out and re-authenticate without restarting
+- **Auto token management** — tokens cached to disk, auto-refreshed on expiry
+- **Optional API key** — protect the proxy with a local Bearer token
+- **Fast** — built in Rust with async I/O, sub-millisecond proxy overhead
 
 ## Quick Start
 
+### Prerequisites
+
+- [Rust](https://rustup.rs/) 1.85+
+- A GitHub account with [Copilot](https://github.com/features/copilot) access
+
+### Build and Run
+
 ```bash
-# Build
+git clone https://github.com/antruongnguyen/github-copilot-proxy.git
+cd copilot-proxy
 cargo build --release
-
-# Run (first time will prompt GitHub device flow auth)
 ./target/release/copilot-proxy
+```
 
-# In another terminal — test it
-curl http://localhost:8080/v1/models
+On first run, your browser opens with a device code. Enter it at GitHub to authorize. Subsequent runs use cached tokens.
 
-curl http://localhost:8080/v1/chat/completions \
+### Test It
+
+```bash
+# List available models
+curl http://localhost:6789/v1/models
+
+# Chat completion
+curl http://localhost:6789/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gpt-4o",
+    "model": "gpt-5.4",
     "messages": [{"role": "user", "content": "Hello!"}]
+  }'
+
+# Streaming
+curl http://localhost:6789/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5.4",
+    "stream": true,
+    "messages": [{"role": "user", "content": "Write a haiku about Rust"}]
   }'
 ```
 
-On first run, the proxy will display a URL and code for GitHub device flow authentication. Visit the URL, enter the code, and the proxy will cache your tokens for subsequent runs.
+## Use with Tools
+
+### Codex CLI
+
+```bash
+# In ~/.codex/config.toml
+model = "gpt-5.4"
+model_provider = "copilot-proxy"
+
+[model_providers.copilot-proxy]
+name = "GitHub Copilot via copilot-proxy"
+base_url = "http://localhost:6789/v1"
+wire_api = "chat"
+env_key = "COPILOT_PROXY_API_KEY"
+```
+
+Then: `codex --provider copilot-proxy "your prompt"`
 
 ## Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/health` | Health check |
-| GET | `/v1/models` | List available Copilot models |
-| POST | `/v1/chat/completions` | Chat completions (streaming + non-streaming) |
-| POST | `/v1/responses` | OpenAI Responses API (streaming SSE) |
-| POST | `/v1/responses/compact` | Compact long conversation context |
-| POST | `/v1/embeddings` | Text embeddings |
+| `GET` | `/` | Web UI — auth status, device code, model list |
+| `GET` | `/health` | Health check |
+| `GET` | `/auth/status` | Auth status (JSON) |
+| `POST` | `/auth/logout` | Sign out and start new device flow |
+| `GET` | `/v1/models` | List available Copilot models |
+| `POST` | `/v1/chat/completions` | Chat completions (streaming + non-streaming) |
+| `POST` | `/v1/embeddings` | Text embeddings |
 
 ## Configuration
 
+All settings can be set via CLI flags, environment variables, or both. CLI flags take priority.
+
 | Setting | CLI Flag | Env Var | Default |
 |---------|----------|---------|---------|
-| Host | `--host` | `COPILOT_PROXY_HOST` | `127.0.0.1` |
-| Port | `--port` | `COPILOT_PROXY_PORT` | `8080` |
-| API Key | `--api-key` | `COPILOT_PROXY_API_KEY` | none (no auth) |
+| Host | `--host` | `COPILOT_PROXY_HOST` | `0.0.0.0` |
+| Port | `--port` | `COPILOT_PROXY_PORT` | `6789` |
+| API Key | `--api-key` | `COPILOT_PROXY_API_KEY` | none |
 | Log Level | `--log-level` | `COPILOT_PROXY_LOG_LEVEL` | `info` |
 | Token Dir | `--token-dir` | `COPILOT_PROXY_TOKEN_DIR` | `~/.config/copilot-proxy/` |
 
-Setting an API key enables local authentication — clients must send `Authorization: Bearer <key>`.
-
-## Codex CLI
-
-The proxy supports [Codex CLI](https://github.com/openai/codex) via the `/v1/responses` endpoint.
+### Examples
 
 ```bash
-# Auto-configure Codex to use the proxy
-./scripts/setup-codex.sh
+# Custom port with API key protection
+copilot-proxy --port 9000 --api-key my-secret-key
 
-# Or with custom port/model
-./scripts/setup-codex.sh --port 9090 --model o4-mini
+# Debug logging
+copilot-proxy --log-level debug
 
-# Use Codex with the proxy running
-codex "your prompt"
+# Custom token storage
+copilot-proxy --token-dir /tmp/copilot-tokens
 ```
 
-The setup script writes `~/.codex/config.toml` with `wire_api = "responses"` pointed at the proxy.
+## How It Works
 
-## Available Models
+1. **Authentication** — GitHub OAuth Device Flow. You authorize once in the browser, and the proxy caches your GitHub access token and Copilot API token to `~/.config/copilot-proxy/`.
 
-- gpt-4o, gpt-4o-mini
-- gpt-4.1, gpt-4.1-mini
-- o3-mini, o4-mini
-- claude-3.5-sonnet, claude-sonnet-4
-- gemini-2.0-flash-001
+2. **Token lifecycle** — On each request, the proxy checks if the Copilot token is still valid. If expired, it silently refreshes using the cached GitHub token. If that fails, it triggers a new device flow.
+
+3. **Request forwarding** — Incoming OpenAI-format requests are forwarded to `api.githubcopilot.com` with the required Copilot headers (editor version, plugin version, request ID, etc.).
+
+4. **Streaming** — SSE streams are passed through byte-for-byte with no buffering.
+
+## License
+
+[MIT](LICENSE) - An Nguyen
