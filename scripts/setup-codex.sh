@@ -4,8 +4,8 @@ set -euo pipefail
 # Setup Codex CLI to use copilot-proxy as its provider.
 # Usage: scripts/setup-codex.sh [--port PORT] [--model MODEL]
 
-PORT=8080
-MODEL="gpt-4o"
+PORT=6789
+MODEL="gpt-5.4"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
