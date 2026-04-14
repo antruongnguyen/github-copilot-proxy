@@ -1,0 +1,9 @@
+# Keep
+!CLAUDE.md
+
+# Ignore
+reference-repos/
+dist/
+node_modules/
+*.log
+/target
